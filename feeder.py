@@ -44,13 +44,15 @@ class Parser:
 		if (self.feeds == 'all'):
 			self.feeds = total_count
 
-
-        #Find a way to take str and int arguments and accordingly loop into the specified loop
-		if self.feeds == int:
+		if type(self.feeds) == int:
 			print("Showing Recent {} feeds".format(self.feeds))
 			for i in range(self.feeds):
 				title = self.feeder.entries[i].title
 				print("{}. {}, ".format(i+1, title))
+
+	def select_feed(self, feed_number):
+		url =
+
 
 
 
