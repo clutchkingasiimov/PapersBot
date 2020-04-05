@@ -69,25 +69,33 @@ class Parser:
 				#Generate request for the ScienceDirect URL link
 				page = requests.get(url, headers=self.headers)
 				paper_page = BeautifulSoup(page.content, 'html.parser')
-				abstr = paper_page.find(id="sp0002").string #Find a bypass for 'string' method
-
+				paras = paper_page.find_all('p')
+				abstr= [] #Store abstracts within the list (unpack them later)
+				for i in range(1, len(paras)-2):
+					abstr.append("-> {}\n".format(paras[i].get_text()))
+				break
 
 			if self.journal_name in self.publishers['Wiley']:
 				abstr = BeautifulSoup(self.feeder.entries[feed_number-1].summary,
 				                      'html.parser').get_text()
-
+				break
 
 		paper_info = namedtuple('PaperInfo', ['title','url','abstract'])
 		paper = paper_info(self.feeder.entries[feed_number-1].title,
 		                   self.feeder.entries[feed_number-1].id,
 		                   abstr)
-		print(paper.title)
-		print(paper.url)
-		print(paper.abstract)
+		print("Title: {}\n".format(paper.title))
+		print("Link: {}\n".format(paper.url))
+		if self.journal_name in self.publishers['Elsevier']:
+			print("Abstract:\n")
+			for i in range(len(paper.abstract)):
+				print(paper.abstract[i])
+		else:
+			print(paper.abstract)
 
 
 
-es = Parser(100, 'ESWA')
+es = Parser(100, 'IJF')
 es.fetch_feeds()
 es.select_feed(2)
 
