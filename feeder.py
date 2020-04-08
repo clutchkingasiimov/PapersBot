@@ -64,7 +64,7 @@ class Parser:
 	def select_feed(self, feed_number):
 		for key in self.publishers.keys():
 			if self.journal_name in self.publishers['Elsevier']:
-				url = self.feeder.entries[feed_number-1].id
+				url = self.feeder.entries[feed_number-1].id #URL assignment for wiley below
 
 				#Generate request for the ScienceDirect URL link
 				page = requests.get(url, headers=self.headers)
@@ -76,13 +76,14 @@ class Parser:
 				break
 
 			if self.journal_name in self.publishers['Wiley']:
+				url = self.feeder.entries[feed_number-1].link #URL assignment for elsevier above
 				abstr = BeautifulSoup(self.feeder.entries[feed_number-1].summary,
 				                      'html.parser').get_text()
 				break
 
 		paper_info = namedtuple('PaperInfo', ['title','url','abstract'])
 		paper = paper_info(self.feeder.entries[feed_number-1].title,
-		                   self.feeder.entries[feed_number-1].id,
+		                   url,
 		                   abstr)
 		print("Title: {}\n".format(paper.title))
 		print("Link: {}\n".format(paper.url))
@@ -95,7 +96,6 @@ class Parser:
 
 
 
-es = Parser(100, 'IJF')
+es = Parser(100, 'JOF')
 es.fetch_feeds()
 es.select_feed(2)
-
